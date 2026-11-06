@@ -14,3 +14,4 @@ Python version used: 3.12.10 | Operating system: Windows 11 | Date: 2026-11-06
 - The test suite verified that each URL structural component (scheme, credentials, hostname, subdomains, length) is isolated and inspected accurately.
 - Even with valid HTTPS or zero flagged heuristics, a link cannot be deemed definitively safe, proving why multi-layered threat intelligence is vital in cybersecurity.
 - Defensive parsing prevented malformed strings (e.g. malformed IPv6 brackets) from crashing the inspection pipeline.
+
