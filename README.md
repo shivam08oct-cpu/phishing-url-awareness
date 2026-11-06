@@ -88,5 +88,6 @@ This is an educational tool. It only reads URL text. It does not visit URLs, sca
 Use sample strings only. Do not collect credentials. Do not use this project to deceive anyone or to test websites without permission. Always follow defensive and authorized security learning principles.
 
 ## Author
-Student, Cybersecurity Course, EWB Courses
+Shivam (shivam08oct-cpu), Cybersecurity Course, EWB Courses  
+Repository: [phishing-url-awareness](https://github.com/shivam08oct-cpu/phishing-url-awareness)
 
