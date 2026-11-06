@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EWB Phishing URL Awareness Checker</title>
+  <meta name="description" content="Check a URL for common phishing warning signs — runs entirely in your browser, no data is ever sent." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Consolas:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>🔍</text></svg>" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-brand" href="#">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      PhishCheck
+    </a>
+    <div class="nav-links">
+      <a href="#how-it-works">How it works</a>
+      <a href="#history">History</a>
+      <a href="https://github.com/shivam08oct-cpu/phishing-url-awareness" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+      Educational Tool · No URLs are visited
+    </div>
+    <h1>Spot <span>Phishing Links</span><br/>Before You Click</h1>
+    <p>Paste any URL and instantly see structural warning signs that attackers use to deceive victims. Everything runs locally — nothing is sent to any server.</p>
+  </div>
+
+  <!-- MAIN CHECKER -->
+  <main>
+    <div class="checker-wrap">
+
+      <!-- Terminal title bar -->
+      <div class="title-bar">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+        <span>phishing_checker — bash</span>
+      </div>
+
+      <!-- Input section -->
+      <div class="input-section">
+        <label class="input-label" for="url-input">Enter a URL to inspect</label>
+        <div class="input-row">
+          <input
+            id="url-input"
+            type="text"
+            placeholder="https://example.com/login"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+          />
+          <button id="check-btn" onclick="runCheck()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            Analyze
+          </button>
+        </div>
+
+        <!-- Sample URLs -->
+        <div class="samples">
+          <span class="sample-label">Try a sample:</span>
+          <button class="sample-btn" onclick="loadSample('http://192.0.2.10/account')">IP address</button>
+          <button class="sample-btn" onclick="loadSample('http://paypal.com@evil.invalid/login')">@ symbol</button>
+          <button class="sample-btn" onclick="loadSample('https://a.b.c.d.e.fake.invalid/reset')">Many subdomains</button>
+          <button class="sample-btn" onclick="loadSample('https://xn--pypl-0ra.invalid/')">Punycode</button>
+          <button class="sample-btn" onclick="loadSample('https://www.example.com/login')">Clean URL</button>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div id="results">
+        <div class="result-header">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          Analysis Result
+        </div>
+        <div id="findings-list"></div>
+        <div id="verdict"></div>
+        <div class="safety-note">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          Never enter passwords or personal data into links received unexpectedly.
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="info-section" id="how-it-works">
+      <div class="section-title">What this tool checks</div>
+      <div class="card-grid">
+        <div class="info-card">
+          <div class="ic-icon">🔗</div>
+          <h3>@ Symbol</h3>
+          <p>Browsers discard everything before <code>@</code>, hiding the true destination host.</p>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">📏</div>
+          <h3>Long URLs</h3>
+          <p>URLs over 100 characters often embed redirect paths designed to confuse users.</p>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">🌐</div>
+          <h3>IP Address</h3>
+          <p>Legitimate sites almost never use a bare IP address — it bypasses domain registration.</p>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">🔀</div>
+          <h3>Subdomains</h3>
+          <p>Five or more hostname segments can disguise the real domain at the end of the chain.</p>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">🌍</div>
+          <h3>Punycode</h3>
+          <p><code>xn--</code> prefixes encode look-alike Unicode letters to spoof brand names.</p>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">🔓</div>
+          <h3>HTTP (not HTTPS)</h3>
+          <p>Unencrypted traffic is easier to intercept. HTTPS alone still doesn't guarantee trust.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="history-section" id="history">
+      <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>Session History</span>
+        <button class="hist-clear" onclick="clearHistory()">Clear all</button>
+      </div>
+      <div id="history-list">
+        <div id="history-empty">No checks yet. Analyze a URL above to start.</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>
+      EWB Phishing URL Awareness Checker &nbsp;·&nbsp;
+      Educational project by <a href="https://github.com/shivam08oct-cpu" target="_blank" rel="noopener">shivam08oct-cpu</a> &nbsp;·&nbsp;
+      <a href="https://github.com/shivam08oct-cpu/phishing-url-awareness" target="_blank" rel="noopener">Source on GitHub ↗</a>
+    </p>
+    <p style="margin-top:.4rem">Text-only analysis. No URL is ever fetched or visited by this tool.</p>
+  </footer>
+
+  <script src="checker.js"></script>
+  <script>
+    const urlInput   = document.getElementById('url-input');
+    const resultsDiv = document.getElementById('results');
+    const findingsList = document.getElementById('findings-list');
+    const verdictDiv = document.getElementById('verdict');
+    const histList   = document.getElementById('history-list');
+    const histEmpty  = document.getElementById('history-empty');
+    let sessionHistory = [];
+
+    // Allow Enter key to trigger check
+    urlInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') runCheck();
+    });
+
+    function loadSample(url) {
+      urlInput.value = url;
+      urlInput.focus();
+      runCheck();
+    }
+
+    function runCheck() {
+      const raw = urlInput.value;
+      if (!raw.trim()) { urlInput.focus(); return; }
+
+      const findings = inspectURL(raw);
+
+      // Render findings
+      findingsList.innerHTML = '';
+      findings.forEach(f => {
+        const icon = f.type === 'warn'
+          ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`
+          : f.type === 'ok'
+          ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`
+          : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+        const div = document.createElement('div');
+        div.className = `finding ${f.type}`;
+        div.innerHTML = icon + `<span>${f.text}</span>`;
+        findingsList.appendChild(div);
+      });
+
+      // Verdict banner
+      const warnCount = findings.filter(f => f.type === 'warn').length;
+      if (warnCount > 0) {
+        verdictDiv.className = 'verdict danger';
+        verdictDiv.innerHTML = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> REVIEW CAREFULLY — ${warnCount} warning sign${warnCount > 1 ? 's' : ''} detected.`;
+      } else {
+        verdictDiv.className = 'verdict safe';
+        verdictDiv.innerHTML = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> No listed warning signs found — this does NOT prove safety.`;
+      }
+
+      resultsDiv.style.display = 'block';
+      resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      // Session history
+      addHistory(raw, warnCount, findings[0]?.type || 'info');
+    }
+
+    function addHistory(url, warnCount, firstType) {
+      const badgeClass = warnCount > 0 ? 'warn' : firstType;
+      const badgeText  = warnCount > 0 ? `⚠ ${warnCount} warning${warnCount > 1 ? 's' : ''}` : '✓ OK';
+      sessionHistory.unshift({ url, badgeClass, badgeText });
+      renderHistory();
+    }
+
+    function renderHistory() {
+      histList.innerHTML = '';
+      if (sessionHistory.length === 0) {
+        histList.innerHTML = '<div id="history-empty">No checks yet. Analyze a URL above to start.</div>';
+        return;
+      }
+      sessionHistory.forEach(({ url, badgeClass, badgeText }) => {
+        const item = document.createElement('div');
+        item.className = 'hist-item';
+        item.innerHTML = `<span class="hist-url">${escapeHtml(url)}</span><span class="hist-badge ${badgeClass}">${badgeText}</span>`;
+        item.onclick = () => { urlInput.value = url; runCheck(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+        histList.appendChild(item);
+      });
+    }
+
+    function clearHistory() {
+      sessionHistory = [];
+      renderHistory();
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+  </script>
+</body>
+</html>
